@@ -9,7 +9,7 @@
 
 ## OUTPUT
 
-![Weather App Screenshot](/screenshots/weather-app-screenshot.png)
+![Weather App Screenshot](https://github.com/user-attachments/assets/fa375d38-0c85-4a40-bc31-e2e6b7cf633c)
 
 ## Project Overview
 
@@ -57,7 +57,7 @@ This is a modern, responsive weather application built using React 19, Vite, Tai
    npm run dev
    ```
 
-5. Open your browser and navigate to `http://localhost:5173`
+5. Open your browser and navigate to `https://weather-application-fawn-xi.vercel.app/`
 
 ## Project Structure
 
