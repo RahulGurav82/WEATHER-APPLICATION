@@ -11,9 +11,7 @@ function App() {
   const [error, setError] = useState(null);
   const [units, setUnits] = useState("metric"); // metric or imperial
   
-  // API key would typically be stored in environment variables
-  // For demonstration purposes only - in a real app, never expose API keys in client-side code
-  const API_KEY = "7429ae0bc8ad8ca7f47eb0453e53a41c";
+  const API_KEY = import.meta.env.VITE_WHEATHERAPI_KEY;
   
   // Get user's location on initial load
   useEffect(() => {
