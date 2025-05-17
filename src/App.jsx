@@ -11,6 +11,7 @@ function App() {
   const [error, setError] = useState(null);
   const [units, setUnits] = useState("metric"); // metric or imperial
   
+  // For demonstration purposes only - in a real app, never expose API keys in client-side code
   const API_KEY = import.meta.env.VITE_WHEATHERAPI_KEY;
   
   // Get user's location on initial load
@@ -33,19 +34,72 @@ function App() {
     }
   }, []);
   
-  const fetchWeatherByCoords = async (lat, lon) => {
+  const toggleUnits = () => {
+    setLoading(true);  // Show loading state while updating
+    const newUnits = units === "metric" ? "imperial" : "metric";
+    setUnits(newUnits);
+    
+    // Refetch data with new units if we have weather data
+    if (weather) {
+      const city = weather.name;
+      // Pass the newUnits value directly to ensure it uses the updated units
+      fetchWeatherByCity(city, newUnits);
+    }
+  };
+
+  // Update the fetchWeatherByCity function to accept units parameter
+  const fetchWeatherByCity = async (city, unitsToUse = units) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Fetch current weather with the provided units
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unitsToUse}&appid=${API_KEY}`
+      );
+      
+      if (!weatherResponse.ok) {
+        throw new Error(weatherResponse.status === 404 ? "City not found" : "Weather data not available");
+      }
+      
+      const weatherData = await weatherResponse.json();
+      
+      // Use coordinates from the weather response to get the forecast
+      const { lat, lon } = weatherData.coord;
+      
+      // Fetch 5-day forecast with the provided units
+      const forecastResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unitsToUse}&appid=${API_KEY}`
+      );
+      
+      if (!forecastResponse.ok) {
+        throw new Error("Forecast data not available");
+      }
+      
+      const forecastData = await forecastResponse.json();
+      
+      setWeather(weatherData);
+      setForecast(forecastData);
+    } catch (err) {
+      setError("Failed to fetch weather data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWeatherByCoords = async (lat, lon, unitsToUse = units) => {
     try {
       setLoading(true);
       setError(null);
       
       // Fetch current weather
       const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${unitsToUse}&appid=${API_KEY}`
       );
       
       // Fetch 5-day forecast
       const forecastResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unitsToUse}&appid=${API_KEY}`
       );
       
       if (!weatherResponse.ok || !forecastResponse.ok) {
@@ -64,55 +118,7 @@ function App() {
     }
   };
   
-  const fetchWeatherByCity = async (city) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Fetch current weather
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${API_KEY}`
-      );
-      
-      if (!weatherResponse.ok) {
-        throw new Error(weatherResponse.status === 404 ? "City not found" : "Weather data not available");
-      }
-      
-      const weatherData = await weatherResponse.json();
-      
-      // Use coordinates from the weather response to get the forecast
-      const { lat, lon } = weatherData.coord;
-      
-      // Fetch 5-day forecast
-      const forecastResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
-      );
-      
-      if (!forecastResponse.ok) {
-        throw new Error("Forecast data not available");
-      }
-      
-      const forecastData = await forecastResponse.json();
-      
-      setWeather(weatherData);
-      setForecast(forecastData);
-    } catch (err) {
-      setError("Failed to fetch weather data: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const toggleUnits = () => {
-    const newUnits = units === "metric" ? "imperial" : "metric";
-    setUnits(newUnits);
-    
-    // Refetch data with new units if we have weather data
-    if (weather) {
-      const { lat, lon } = weather.coord;
-      fetchWeatherByCoords(lat, lon);
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-700 p-4 md:p-8">
@@ -128,7 +134,7 @@ function App() {
             <span className="text-white mr-2">Units:</span>
             <button
               onClick={toggleUnits}
-              className="bg-white/30 hover:bg-white/40 text-white font-medium py-1 px-3 rounded-full transition-colors"
+              className="bg-white/30 hover:bg-white/40 text-white font-medium py-1 px-3 rounded-full transition-colors cursor-pointer"
             >
               {units === "metric" ? "°C" : "°F"}
             </button>

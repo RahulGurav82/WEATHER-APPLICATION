@@ -10,11 +10,15 @@ function WeatherCard({ weather, units }) {
   } = weather;
 
   const formatTemp = (temp) => Math.round(temp);
+  
   const formatWindSpeed = (speed) => {
     return units === "metric" 
       ? `${speed.toFixed(1)} m/s` 
       : `${speed.toFixed(1)} mph`;
   };
+
+  // Use the explicit units prop rather than possibly stale units data from the weather object
+  const displayUnits = units;
 
   return (
     <div className="bg-white/20 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
@@ -34,7 +38,7 @@ function WeatherCard({ weather, units }) {
             />
             <div className="ml-4">
               <div className="text-5xl font-bold text-white">
-                {formatTemp(temp)}°{units === "metric" ? "C" : "F"}
+                {formatTemp(temp)}°{displayUnits === "metric" ? "C" : "F"}
               </div>
               <div className="text-white/90 capitalize">{description}</div>
             </div>
@@ -46,7 +50,7 @@ function WeatherCard({ weather, units }) {
             <div>
               <div className="text-white/70">Feels Like</div>
               <div className="text-xl font-semibold">
-                {formatTemp(feels_like)}°{units === "metric" ? "C" : "F"}
+                {formatTemp(feels_like)}°{displayUnits === "metric" ? "C" : "F"}
               </div>
             </div>
             <div>

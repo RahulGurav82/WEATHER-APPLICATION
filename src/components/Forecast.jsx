@@ -38,6 +38,9 @@ function Forecast({ forecast, units }) {
     return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
   };
 
+  // Use the explicit units prop rather than possibly stale units data from the forecast object
+  const displayUnits = units;
+
   return (
     <div className="bg-white/20 backdrop-blur-lg rounded-xl shadow-lg p-6">
       <h3 className="text-xl font-bold text-white mb-4">5-Day Forecast</h3>
@@ -55,7 +58,7 @@ function Forecast({ forecast, units }) {
               className="w-12 h-12 my-1"
             />
             <div className="text-lg font-bold text-white">
-              {formatTemp(item.main.temp)}°{units === "metric" ? "C" : "F"}
+              {formatTemp(item.main.temp)}°{displayUnits === "metric" ? "C" : "F"}
             </div>
             <div className="text-white/70 text-sm capitalize">
               {item.weather[0].description}
