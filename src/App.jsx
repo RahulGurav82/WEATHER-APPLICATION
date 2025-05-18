@@ -3,6 +3,7 @@ import WeatherCard from "./components/WeatherCard";
 import SearchBox from "./components/SearchBox";
 import Forecast from "./components/Forecast";
 import LoadingSpinner from "./components/LoadingSpinner";
+import WeatherEffects from "./components/WeatherEffects"; // Import the new component
 
 function App() {
   const [weather, setWeather] = useState(null);
@@ -122,6 +123,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-700 p-4 md:p-8">
+      {/* Add the WeatherEffects component */}
+      {weather && <WeatherEffects weather={weather} />}
+      
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
           Weather App
