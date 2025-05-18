@@ -12,12 +12,12 @@ function App() {
   const [error, setError] = useState(null);
   const [units, setUnits] = useState("metric"); // metric or imperial
   
-  // For demonstration purposes only - in a real app, never expose API keys in client-side code
   const API_KEY = import.meta.env.VITE_WHEATHERAPI_KEY;
   
   // Get user's location on initial load
   useEffect(() => {
     if (navigator.geolocation) {
+      console.log(navigator)
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -128,7 +128,7 @@ function App() {
       
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
-          Weather App
+          WeatherNow
         </h1>
         
         <div className="bg-white/20 backdrop-blur-lg rounded-xl shadow-lg p-4 md:p-6 mb-6">
